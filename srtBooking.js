@@ -5,10 +5,10 @@ let reserved = false;
   let driver = await new Builder().forBrowser("chrome").build();
 
   try {
-    // 1 SRT 로그인 페이지 접속
+    // 1. SRT 로그인 페이지 접속
     await driver.get("https://etk.srail.kr/cmc/01/selectLoginForm.do");
 
-    // 2 로그인 정보 입력
+    // 2. 로그인 정보 입력
     await driver.findElement(By.id("srchDvNm01")).sendKeys("아이디입력"); //  SRT 아이디 입력
     await driver
       .findElement(By.id("hmpgPwdCphd01"))
@@ -16,11 +16,10 @@ let reserved = false;
 
     console.log("로그인 성공!");
 
-    // 3 검색화면 이동
+    // 3. 검색화면 이동
     await driver.get("https://etk.srail.kr/hpg/hra/01/selectScheduleList.do");
 
-    while (!reserved) {
-      // 4 출발역, 도착역, 날짜 및 시간 입력
+     // 4. 출발역, 도착역, 날짜 및 시간 입력
       // 4.1 출발역
       await driver.executeScript(`
         let input = document.getElementById('dptRsStnCdNm');
@@ -31,7 +30,6 @@ let reserved = false;
       await driver.executeScript(`
         let input = document.getElementById('arvRsStnCdNm');
         input.value = '동탄'; 
-      
       `);
 
       // 4.3 날짜
@@ -63,9 +61,9 @@ let reserved = false;
         select.dispatchEvent(new Event('change', { bubbles: true }));
       `);
 
-      console.log("기차 조회 중.");
-
-      // 5 조회버큰 클릭
+    while (!reserved) {
+     
+      // 5. 조회버튼 클릭
       const searchBtn = await driver.wait(
         until.elementIsVisible(
           driver.findElement(By.css("input[type='submit'][value='조회하기']"))
@@ -78,7 +76,7 @@ let reserved = false;
 
       console.log("기차 조회 완료!");
 
-      // 6 예약 가능한 기차 찾기 (일반실)
+      // 6. 예약 가능한 기차 찾기 (일반실)
       let reserveBtns = await driver.findElements(
         By.xpath("//tr/td[7]/a[span[text()='예약하기']]") // XPath는 인덱스가 1부터 시작함.
       );
