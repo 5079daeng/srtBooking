@@ -35,11 +35,11 @@ const SRT_STATIONS = {
 };
 
 // 사용자 입력 데이터
-const USER_ID = "사용자아이디";
-const PASSWORD = "사용자비밀번호";
+const USER_ID = "SRT아이디";
+const PASSWORD = "SRT비밀번호";
 const DEPARTURE = "동탄";
 const ARRIVAL = "부산";
-const TRAVEL_DATE = "20250309"; 
+const TRAVEL_DATE = "20250311"; 
 const TRAVEL_TIME = "130000";
 
 let reserved = false;
@@ -113,6 +113,8 @@ let reserved = false;
                   "예약 성공! 10분 내에 결제하지 않으면 예약이 취소됩니다."
                 );
                 reserved = true;
+                sendEmail();
+                
                 break;
               }
             } catch (e) {
@@ -121,7 +123,6 @@ let reserved = false;
               );
             }
 
-            break;
           } catch (e) {
             console.error(
               `예약 실패. 에러메세지 : ${e.message || JSON.stringify(e)}`
@@ -151,7 +152,45 @@ let reserved = false;
     }
   } catch (e) {
     console.error(`에러 : ${e.message || JSON.stringify(e)}`);
-  } finally {
-    await driver.quit();
-  }
+  } 
+//   finally {
+//     await driver.quit();
+//   }
 })();
+
+const nodemailer = require("nodemailer");
+
+// 이메일 발송 함수
+async function sendEmail() {
+    let transporter = nodemailer.createTransport({
+        service: "gmail", // Gmail SMTP 사용
+        auth: {
+            user: "Gmail주소", // 2단계인증 및 앱비밀번호 생성한 Gmail주소
+            pass: "앱비밀번호" // Gmail주소의 앱 비밀번호 (계정 비밀번호 아님)
+        }
+    });
+
+    let mailOptions = {
+        from: "Gmail주소", // 보내는 사람
+        to: "메일받을주소", // 받는 사람
+        subject: 'SRT 예매 성공! 10분 이내로 결제하지 않으면 예약이 취소됩니다.', 
+        html: `
+        <p>SRT 예매가 완료되었습니다.</p>
+        <br>
+        <strong>10분 내에 결제하지 않으면 예약이 취소됩니다.</strong>
+        <br><br>
+        <a href='https://etk.srail.kr/main.do' target='_blank'>SRT 홈페이지 바로가기</a>
+    `,
+    };
+
+    try {
+        let info = await transporter.sendMail(mailOptions);
+        console.log("이메일 전송 성공:", info.response);
+    } catch (error) {
+        console.error("이메일 전송 실패:", error);
+    }
+}
+
+// 예매 성공 시 호출
+
+

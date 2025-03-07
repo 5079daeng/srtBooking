@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "chromedriver": "^134.0.0",
+    "nodemailer": "^6.10.0",
     "selenium-webdriver": "^4.29.0"
   }
 }
